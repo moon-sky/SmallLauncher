@@ -1,6 +1,8 @@
 package com.ai.moonvsky.smalllauncher;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -21,59 +23,31 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
+    private AppViewModel appViewModel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final MyAdapter myAdapter = new MyAdapter();
+        appViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+        appViewModel.getmAllApps().observe(this, new Observer<List<App>>() {
+            @Override
+            public void onChanged(@Nullable List<App> apps) {
+                myAdapter.setmDataset(apps);
+            }
+        });
         recyclerView = findViewById(R.id.rv_app);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(new SpaceItemDecoration());
-        new LoadTask(this).execute();
+        recyclerView.setAdapter(myAdapter);
 
 
     }
 
-    class LoadTask extends AsyncTask<Void,Integer,ArrayList<App>> {
-
-        ArrayList<App> appList=new ArrayList<>();
-        PackageManager packageManager;
-
-        public LoadTask(@NonNull Context context) {
-            this.packageManager=context.getPackageManager();
-        }
-
-
-        @Override
-        protected ArrayList<App> doInBackground(Void... voids) {
-            List<PackageInfo> packagesInfo = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES);
-            for (PackageInfo appInfo : packagesInfo
-                    ) {
-                App app = new App();
-                app.packageName = appInfo.packageName;
-                app.appName = appInfo.applicationInfo.loadLabel(packageManager).toString();
-                app.launchIntent = packageManager.getLaunchIntentForPackage(app.packageName);
-                try {
-                    if (app.launchIntent != null) {
-                        app.icon = packageManager.getActivityIcon(app.launchIntent);
-                        appList.add(app);
-                    }
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-            return appList;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<App> apps) {
-            MyAdapter myAdapter = new MyAdapter(apps);
-            recyclerView.setAdapter(myAdapter);
-        }
-    }
 
 
 }
