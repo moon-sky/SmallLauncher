@@ -5,11 +5,15 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,5 +65,46 @@ class AppRepository {
             mAllApps.postValue(appList);
             return appList;
         }
+    }
+
+    public class AppInstallReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PackageManager manager = context.getPackageManager();
+            if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)) {
+                String packageName = intent.getData().getSchemeSpecificPart();
+                App app = new App();
+                app.packageName = packageName;
+                app.launchIntent = context.getPackageManager().getLaunchIntentForPackage(app.packageName);
+                try {
+                    app.appName = context.getResources().getString(context.getPackageManager().getPackageInfo(packageName, 0).applicationInfo.labelRes);
+                    app.icon = context.getPackageManager().getApplicationIcon(packageName);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                mAllApps.getValue().add(app);
+//                Toast.makeText(context, "安装成功"+packageName, Toast.LENGTH_LONG).show();
+            }
+            if (intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)) {
+                Log.d("Test", "onReceive: " + Intent.ACTION_PACKAGE_REMOVED);
+                String packageName = intent.getData().getSchemeSpecificPart();
+                Toast.makeText(context, "卸载成功" + packageName, Toast.LENGTH_LONG).show();
+                for (App app :
+                        mAllApps.getValue()) {
+                    if (packageName.equals(app.packageName)) {
+                        mAllApps.getValue().remove(app);
+                    }
+                }
+            }
+            if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
+                String packageName = intent.getData().getSchemeSpecificPart();
+                Toast.makeText(context, "替换成功" + packageName, Toast.LENGTH_LONG).show();
+            }
+
+
+        }
+
     }
 }

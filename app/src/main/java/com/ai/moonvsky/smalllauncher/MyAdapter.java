@@ -3,17 +3,24 @@ package com.ai.moonvsky.smalllauncher;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ai.moonvsky.smalllauncher.AppUtils.getUninstallAppIntent;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<App> mDataset;
@@ -26,6 +33,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         // each data item is just a string in this case
         TextView mTextView;
         ImageView imageView;
+        LinearLayout mRootView;
+        boolean isLongClick = false;
 
         MyViewHolder(LinearLayout v) {
             super(v);
@@ -52,19 +61,35 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset.get(position).appName);
+        holder.mTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                MyApplication.getContext().startActivity(getUninstallAppIntent(mDataset.get(position).packageName));
+                return false;
+            }
+        });
         holder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 MyApplication.getContext().startActivity(mDataset.get(position).launchIntent);
+            }
+        });
+        holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                MyApplication.getContext().startActivity(getUninstallAppIntent(mDataset.get(position).packageName));
+                return false;
             }
         });
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 MyApplication.getContext().startActivity(mDataset.get(position).launchIntent);
             }
         });
@@ -85,4 +110,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         mDataset = appList;
         notifyDataSetChanged();
     }
+
+
 }
