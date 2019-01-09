@@ -8,7 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -22,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToobar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToobar);
         final MyAdapter myAdapter = new MyAdapter();
         appViewModel = ViewModelProviders.of(this).get(AppViewModel.class);
         appViewModel.getmAllApps().observe(this, new Observer<List<App>>() {
@@ -48,5 +53,17 @@ public class MainActivity extends AppCompatActivity {
             appViewModel.unregisterAppReceiver();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
     }
 }

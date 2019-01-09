@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
-int delta=(int)(MyApplication.getContext().getResources().getDisplayMetrics().density*10+0.5);
+    int delta = MyApplication.getContext().getResources().getDimensionPixelSize(R.dimen.delta);
 
 
     @Override
