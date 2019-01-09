@@ -2,27 +2,25 @@ package com.ai.moonvsky.smalllauncher;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.icu.text.Collator;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.ai.moonvsky.smalllauncher.AppUtils.getUninstallAppIntent;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+    public static final String TAG = "Test";
     private List<App> mDataset;
     private Context context;
 
@@ -39,7 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         MyViewHolder(LinearLayout v) {
             super(v);
             mTextView = v.findViewById(R.id.tv_name);
-            imageView=v.findViewById(R.id.img_app);
+            imageView = v.findViewById(R.id.img_app);
 
         }
     }
@@ -108,6 +106,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     void setmDataset(List<App> appList) {
         mDataset = appList;
+        Log.d(TAG, "setmDataset:SIZE: " + appList.size());
+        Collections.sort(mDataset, new Comparator<App>() {
+            @Override
+            public int compare(App o1, App o2) {
+
+                return java.text.Collator.getInstance().compare(o2.getAppName(),o1.getAppName());
+            }
+        });
         notifyDataSetChanged();
     }
 

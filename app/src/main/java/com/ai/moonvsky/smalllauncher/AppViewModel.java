@@ -22,4 +22,7 @@ public class AppViewModel extends AndroidViewModel {
     public MutableLiveData<List<App>> getmAllApps() {
         return mAllApps;
     }
+    public void unregisterAppReceiver(){
+        appRepository.unregisterAppReceiver();
+    }
 }
