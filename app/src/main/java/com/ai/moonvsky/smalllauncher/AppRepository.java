@@ -51,7 +51,6 @@ class AppRepository {
 
     class LoadTask extends AsyncTask<Void, Integer, ArrayList<App>> {
 
-        private Context mContext;
         PackageManager packageManager;
         private ArrayList<App> appList;
 
