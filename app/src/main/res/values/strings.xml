@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SmallLauncher</string>
+    <string name="wifi">wifi</string>
+    <string name="battery">battery</string>
+    <string name="full">100</string>
 </resources>
