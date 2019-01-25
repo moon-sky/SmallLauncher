@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             }
             mBatteryIcon.setImageResource(resId);
             Log.d(TAG, "updateBatteryView: "+batteryInfo.toString());
-            batteryPercent.setText(batteryInfo.getBatteryPercent());
+            batteryPercent.setText(batteryInfo.getBatteryPercent()+"");
         }
     }
     private boolean range(int target,int low,int max){
